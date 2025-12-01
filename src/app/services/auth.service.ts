@@ -8,6 +8,12 @@ interface AuthLoginResponse {
   url: string;
 }
 
+interface UserProfileResponse {
+  name?: string;
+  email?: string;
+  picture?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -40,5 +46,9 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getUserId();
+  }
+
+  getUserProfile(userId: string): Observable<UserProfileResponse> {
+    return this.http.get<UserProfileResponse>(`${environment.backendUrl}/auth/profile/${userId}`);
   }
 }

@@ -1,0 +1,112 @@
+<div class="email-detail-container" *ngIf="email">
+  <div class="email-detail-card">
+    <div class="email-header-section">
+      <div class="header-top">
+        <div class="subject-section">
+          <h2 class="email-subject">{{ email.subject || '(No Subject)' }}</h2>
+          <div *ngIf="email.classification" class="classification-badge">
+            <i class="bi bi-robot"></i>
+            <span>{{ email.classification }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="email-meta-section">
+        <div class="meta-item">
+          <div class="meta-icon">
+            <i class="bi bi-person"></i>
+          </div>
+          <div class="meta-content">
+            <span class="meta-label">From</span>
+            <span class="meta-value">{{ email.from }}</span>
+          </div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-icon">
+            <i class="bi bi-clock"></i>
+          </div>
+          <div class="meta-content">
+            <span class="meta-label">Date</span>
+            <span class="meta-value">{{ email.date | date:'medium' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="email-content-section">
+      <div class="snippet-box">
+        <div class="snippet-label">
+          <i class="bi bi-chat-quote"></i>
+          Preview
+        </div>
+        <p class="snippet-text">{{ email.snippet }}</p>
+      </div>
+
+      <div *ngIf="email.body" class="email-body-section">
+        <div class="body-label">
+          <i class="bi bi-file-text"></i>
+          Full Content
+        </div>
+        <div class="email-body-content" [innerHTML]="email.body"></div>
+      </div>
+    </div>
+
+    <div class="action-section">
+      <button
+        *ngIf="!showReply"
+        class="generate-reply-button"
+        (click)="generateReply()"
+        [disabled]="loadingReply">
+        <span *ngIf="loadingReply" class="button-spinner"></span>
+        <i *ngIf="!loadingReply" class="bi bi-magic"></i>
+        <span>{{ loadingReply ? 'Generating...' : 'Generate AI Reply' }}</span>
+      </button>
+
+      <div *ngIf="showReply" class="reply-section">
+        <div class="reply-header">
+          <div class="reply-header-content">
+            <i class="bi bi-robot"></i>
+            <span>AI Generated Reply</span>
+          </div>
+        </div>
+        
+        <div class="reply-textarea-wrapper">
+          <textarea
+            class="reply-textarea"
+            rows="8"
+            [(ngModel)]="replyText"
+            placeholder="AI-generated reply will appear here..."></textarea>
+        </div>
+
+        <div *ngIf="error" class="message-alert error">
+          <i class="bi bi-exclamation-circle"></i>
+          <span>{{ error }}</span>
+        </div>
+
+        <div *ngIf="success" class="message-alert success">
+          <i class="bi bi-check-circle"></i>
+          <span>{{ success }}</span>
+        </div>
+
+        <div class="reply-actions">
+          <button
+            class="action-button send-button"
+            (click)="sendReply()"
+            [disabled]="!replyText || sending">
+            <span *ngIf="sending" class="button-spinner"></span>
+            <i *ngIf="!sending" class="bi bi-send-fill"></i>
+            <span>{{ sending ? 'Sending...' : 'Send Reply' }}</span>
+          </button>
+          <button
+            class="action-button clear-button"
+            (click)="clearReply()"
+            [disabled]="sending">
+            <i class="bi bi-x-circle"></i>
+            <span>Clear</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

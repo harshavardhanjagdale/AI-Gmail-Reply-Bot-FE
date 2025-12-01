@@ -1,0 +1,121 @@
+<div class="inbox-container">
+  <nav class="top-navbar">
+    <div class="navbar-content">
+      <div class="navbar-brand-section">
+        <div class="brand-icon">
+          <i class="bi bi-envelope-paper-heart"></i>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">Email Action Bot</h1>
+          <p class="brand-subtitle">AI-Powered Email Management</p>
+        </div>
+      </div>
+      <div class="navbar-right">
+        <div class="welcome-user">
+          <i class="bi bi-person-circle"></i>
+          <span>Welcome, {{ userName }}</span>
+        </div>
+        <button class="logout-button" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <div class="email-list-panel">
+      <div class="panel-header">
+        <div class="header-left">
+          <div class="header-icon">
+            <i class="bi bi-inbox-fill"></i>
+          </div>
+          <div>
+            <h2 class="panel-title">Inbox</h2>
+            <p class="panel-subtitle" *ngIf="!loadingEmails && emails.length > 0">
+              {{ emails.length }} emails
+              <span class="mail-limit-info">(Showing latest 50 mails)</span>
+            </p>
+            <p class="panel-subtitle" *ngIf="!loadingEmails && emails.length === 0">
+              No emails
+            </p>
+          </div>
+        </div>
+        <button
+          class="refresh-button"
+          (click)="loadEmails()"
+          [disabled]="loadingEmails"
+          [class.loading]="loadingEmails">
+          <i class="bi bi-arrow-clockwise" [class.spinning]="loadingEmails"></i>
+        </button>
+      </div>
+
+      <div class="panel-body">
+        <div *ngIf="loadingEmails" class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading emails...</p>
+        </div>
+
+        <div *ngIf="error && !loadingEmailDetail" class="error-alert">
+          <i class="bi bi-exclamation-triangle"></i>
+          <span>{{ error }}</span>
+        </div>
+
+        <div *ngIf="!loadingEmails && emails.length === 0" class="empty-state">
+          <div class="empty-icon">
+            <i class="bi bi-inbox"></i>
+          </div>
+          <p class="empty-text">No emails found</p>
+          <p class="empty-subtext">Your inbox is empty</p>
+        </div>
+
+        <div class="email-list" *ngIf="!loadingEmails">
+          <div
+            *ngFor="let email of emails; let i = index"
+            class="email-item"
+            [class.active]="selectedEmail?.id === email.id"
+            (click)="selectEmail(email)"
+            [style.animation-delay]="i * 0.05 + 's'">
+            <div class="email-avatar">
+              <span>{{ email.from.charAt(0).toUpperCase() }}</span>
+            </div>
+            <div class="email-content">
+              <div class="email-header">
+                <div class="email-from">{{ email.from }}</div>
+                <div class="email-date">{{ formatDate(email.date) }}</div>
+              </div>
+              <div class="email-subject">{{ email.subject || '(No Subject)' }}</div>
+              <div class="email-snippet">{{ email.snippet }}</div>
+            </div>
+            <div class="email-indicator" *ngIf="selectedEmail?.id === email.id">
+              <i class="bi bi-chevron-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="email-detail-panel">
+      <div *ngIf="loadingEmailDetail" class="loading-overlay">
+        <div class="spinner-large"></div>
+        <p>Loading email...</p>
+      </div>
+
+      <div *ngIf="!selectedEmail && !loadingEmailDetail" class="empty-detail-state">
+        <div class="empty-detail-icon">
+          <i class="bi bi-envelope-open"></i>
+        </div>
+        <h3>Select an email</h3>
+        <p>Choose an email from your inbox to view its details</p>
+      </div>
+
+      <app-email-detail
+        *ngIf="selectedEmail && !loadingEmailDetail"
+        [email]="selectedEmail"
+        [userId]="userId!"
+        (emailSent)="onEmailSent()">
+      </app-email-detail>
+    </div>
+  </div>
+</div>
+
