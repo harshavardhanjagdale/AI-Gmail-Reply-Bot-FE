@@ -61,26 +61,6 @@
           <i *ngIf="!loadingReply" class="bi bi-magic"></i>
           <span>{{ loadingReply ? 'Generating...' : 'Generate AI Reply' }}</span>
         </button>
-        <div class="info-button-wrapper">
-          <button class="info-button" (click)="toggleInfo()" type="button">
-            <i class="bi bi-info-circle"></i>
-          </button>
-          <div class="info-popup" *ngIf="showInfo" (click)="$event.stopPropagation()">
-            <div class="info-popup-content">
-              <div class="info-header">
-                <i class="bi bi-envelope-check"></i>
-                <h4>Gmail Action Bot</h4>
-              </div>
-              <p class="info-text" *ngIf="isNonGmailEmail">
-                <strong>Note:</strong> This email is from a non-Gmail domain. This application can only send replies to <strong>&#64;gmail.com</strong> addresses.
-              </p>
-            
-              <p class="info-text">
-                All replies are sent through your connected Gmail account.
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
 
       <div *ngIf="showReply" class="reply-section">
