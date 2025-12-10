@@ -25,19 +25,42 @@
         </div>
       </div>
       
-      <div class="gmail-ai-badge">
-        <div class="badge-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="52 42 88 66" class="gmail-logo-small">
-            <path fill="#4285f4" d="M58 108h14V74L52 59v43c0 3.32 2.69 6 6 6"/>
-            <path fill="#34a853" d="M120 108h14c3.32 0 6-2.69 6-6V59l-20 15"/>
-            <path fill="#fbbc04" d="M120 48v26l20-15v-8c0-7.42-8.47-11.65-14.4-7.2"/>
-            <path fill="#ea4335" d="M72 74V48l24 18 24-18v26L96 92"/>
-            <path fill="#c5221f" d="M52 51v8l20 15V48l-5.6-4.2c-5.94-4.45-14.4-.22-14.4 7.2"/>
-          </svg>
+      <div class="gmail-ai-badge-wrapper">
+        <div class="gmail-ai-badge">
+          <div class="badge-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="52 42 88 66" class="gmail-logo-small">
+              <path fill="#4285f4" d="M58 108h14V74L52 59v43c0 3.32 2.69 6 6 6"/>
+              <path fill="#34a853" d="M120 108h14c3.32 0 6-2.69 6-6V59l-20 15"/>
+              <path fill="#fbbc04" d="M120 48v26l20-15v-8c0-7.42-8.47-11.65-14.4-7.2"/>
+              <path fill="#ea4335" d="M72 74V48l24 18 24-18v26L96 92"/>
+              <path fill="#c5221f" d="M52 51v8l20 15V48l-5.6-4.2c-5.94-4.45-14.4-.22-14.4 7.2"/>
+            </svg>
+          </div>
+          <div class="badge-content">
+            <span class="badge-label">AI-POWERED</span>
+            <span class="badge-subtitle">Gmail Assistant</span>
+          </div>
         </div>
-        <div class="badge-content">
-          <span class="badge-label">AI-Powered</span>
-          <span class="badge-subtitle">Gmail Assistant</span>
+        <a 
+          href="https://myaccount.google.com/permissions" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="remove-access-link">
+          <i class="bi bi-shield-x"></i>
+          <span>Remove Access</span>
+          <i class="bi bi-box-arrow-up-right external-icon"></i>
+        </a>
+        <div class="info-button-container">
+          <button class="info-button" (click)="toggleInfoPopup($event)">
+            <i class="bi bi-info-circle"></i>
+          </button>
+          <div class="info-popup" *ngIf="showInfoPopup" (click)="$event.stopPropagation()">
+            <div class="info-popup-content">
+              <i class="bi bi-shield-check info-popup-icon"></i>
+              <p>Your data is secure, encrypted, and never stored. If you want to remove Gmail access for this app, just click <strong>'Remove Access'</strong>, choose your Gmail account, and revoke the permission.</p>
+            </div>
+            <div class="info-popup-arrow"></div>
+          </div>
         </div>
       </div>
       
@@ -65,7 +88,8 @@
             <h2 class="panel-title">Inbox</h2>
             <p class="panel-subtitle" *ngIf="!loadingEmails && emails.length > 0">
               {{ emails.length }} gmails
-              <span class="mail-limit-info">(Showing latest 50 mails)</span>
+              <span class="mail-limit-info" *ngIf="emails.length >= 50">Primary inbox(Showing latest 50)</span>
+              <span class="mail-limit-info" *ngIf="emails.length < 50">Primary inbox(All recent mails)</span>
             </p>
             <p class="panel-subtitle" *ngIf="!loadingEmails && emails.length === 0">
               No gmails

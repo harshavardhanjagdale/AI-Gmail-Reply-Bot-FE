@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -20,6 +20,7 @@ export class InboxComponent implements OnInit {
   loadingEmailDetail = false;
   error = '';
   userName: string = 'User';
+  showInfoPopup = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -149,5 +150,15 @@ export class InboxComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/']);
+  }
+
+  toggleInfoPopup(event: Event): void {
+    event.stopPropagation();
+    this.showInfoPopup = !this.showInfoPopup;
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.showInfoPopup = false;
   }
 }
