@@ -7,6 +7,21 @@
     <div class="shape shape-4"></div>
     <div class="shape shape-5"></div>
   </div>
+  
+  <!-- Access Revoked Message -->
+  <div class="access-revoked-alert" *ngIf="accessRevokedMessage">
+    <div class="alert-content">
+      <i class="bi bi-shield-exclamation alert-icon"></i>
+      <div class="alert-text">
+        <strong>Access Removed</strong>
+        <p>You have successfully removed Gmail access for this app. Sign in again to continue using the service.</p>
+      </div>
+      <button class="alert-close" (click)="dismissMessage()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </div>
+  
   <div class="welcome-content">
     <div class="logo-section">
       <div class="logo-icon">

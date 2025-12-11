@@ -63,9 +63,13 @@ export class InboxComponent implements OnInit {
         this.loadingEmails = false;
       },
       error: (err) => {
-        this.error = 'Failed to load emails. Please try again.';
         this.loadingEmails = false;
-        console.error('Error loading emails:', err);
+        if (this.isAuthError(err)) {
+          this.handleAuthError();
+        } else {
+          this.error = 'Failed to load emails. Please try again.';
+          console.error('Error loading emails:', err);
+        }
       }
     });
   }
@@ -84,9 +88,12 @@ export class InboxComponent implements OnInit {
         }
       },
       error: (err) => {
-        // If API fails, fall back to extracting from userId
-        console.warn('Failed to load user profile, using fallback:', err);
-        this.extractUserName();
+        if (this.isAuthError(err)) {
+          this.handleAuthError();
+        } else {
+          console.warn('Failed to load user profile, using fallback:', err);
+          this.extractUserName();
+        }
       }
     });
   }
@@ -150,6 +157,30 @@ export class InboxComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/']);
+  }
+
+  // Check if the error is an authentication/authorization error
+  private isAuthError(err: any): boolean {
+    if (err.status === 401 || err.status === 403) {
+      return true;
+    }
+    const errorMessage = err.error?.message || err.error?.error || err.message || '';
+    const authKeywords = [
+      'token', 'unauthorized', 'unauthenticated', 'access denied', 
+      'invalid credentials', 'authentication', 'permission', 'revoked',
+      're-authenticate', 'expired', 'invalid_grant'
+    ];
+    return authKeywords.some(keyword => 
+      errorMessage.toLowerCase().includes(keyword)
+    );
+  }
+
+  private handleAuthError(): void {
+    console.warn('Authentication error detected. Access may have been revoked.');
+    this.authService.logout();
+    this.router.navigate(['/'], { 
+      queryParams: { message: 'access_revoked' } 
+    });
   }
 
   toggleInfoPopup(event: Event): void {
