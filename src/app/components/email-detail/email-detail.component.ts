@@ -82,4 +82,30 @@ export class EmailDetailComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnDestroy(): void {
   }
+
+  getCategoryClass(category: string): string {
+    const categoryMap: { [key: string]: string } = {
+      'Invoice': 'category-invoice',
+      'Leave Request': 'category-leave',
+      'Support Request': 'category-support',
+      'Meeting Request': 'category-meeting',
+      'Purchase Order': 'category-purchase',
+      'Spam': 'category-spam',
+      'Other': 'category-other'
+    };
+    return categoryMap[category] || 'category-other';
+  }
+
+  getCategoryIcon(category: string): string {
+    const iconMap: { [key: string]: string } = {
+      'Invoice': 'bi-receipt',
+      'Leave Request': 'bi-calendar-check',
+      'Support Request': 'bi-headset',
+      'Meeting Request': 'bi-calendar-event',
+      'Purchase Order': 'bi-cart-check',
+      'Spam': 'bi-shield-exclamation',
+      'Other': 'bi-envelope'
+    };
+    return iconMap[category] || 'bi-tag';
+  }
 }

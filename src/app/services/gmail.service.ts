@@ -21,7 +21,9 @@ export interface EmailDetail {
   date: string;
   snippet: string;
   body?: string;
-  classification?: string;
+  category?: string;
+  action?: string;
+  justification?: string;
 }
 
 export interface ReplyResponse {
@@ -41,10 +43,12 @@ interface ListEmailsResponse {
 }
 
 interface FetchEmailResponse {
-  category?: string;
-  action?: string;
-  justification?: string;
-  rawModelResponse?: string;
+  result: {
+    category?: string;
+    action?: string;
+    justification?: string;
+    rawModelResponse?: string;
+  };
 }
 
 @Injectable({
@@ -65,7 +69,9 @@ export class GmailService {
     return this.http.get<FetchEmailResponse>(`${this.baseUrl}/gmail/fetch/${userId}/${messageId}`).pipe(
       map(response => ({
         ...emailListItem,
-        classification: response.category || response.action,
+        category: response.result?.category,
+        action: response.result?.action,
+        justification: response.result?.justification,
         body: undefined // API doesn't return body in this response
       }))
     );

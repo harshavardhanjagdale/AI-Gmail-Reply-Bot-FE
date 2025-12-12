@@ -4,9 +4,31 @@
       <div class="header-top">
         <div class="subject-section">
           <h2 class="email-subject">{{ email.subject || '(No Subject)' }}</h2>
-          <div *ngIf="email.classification" class="classification-badge">
-            <i class="bi bi-robot"></i>
-            <span>{{ email.classification }}</span>
+          <div *ngIf="email.category" class="classification-badge" [ngClass]="getCategoryClass(email.category)">
+            <i class="bi" [ngClass]="getCategoryIcon(email.category)"></i>
+            <span>{{ email.category }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- AI Classification Section -->
+      <div *ngIf="email.category" class="ai-classification-section">
+        <div class="classification-header">
+          <i class="bi bi-robot"></i>
+          <span>AI Classification</span>
+        </div>
+        <div class="classification-details">
+          <div class="classification-item">
+            <span class="item-label">Category:</span>
+            <span class="item-value category-value">{{ email.category }}</span>
+          </div>
+          <div class="classification-item" *ngIf="email.action">
+            <span class="item-label">Suggested Action:</span>
+            <span class="item-value action-value">{{ email.action }}</span>
+          </div>
+          <div class="classification-item justification" *ngIf="email.justification">
+            <span class="item-label">Reason:</span>
+            <span class="item-value justification-value">{{ email.justification }}</span>
           </div>
         </div>
       </div>

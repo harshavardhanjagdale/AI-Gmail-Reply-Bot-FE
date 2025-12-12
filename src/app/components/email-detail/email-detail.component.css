@@ -131,6 +131,127 @@
   font-size: 1rem;
 }
 
+/* Category-specific badge colors */
+.classification-badge.category-invoice {
+  background: linear-gradient(135deg, #34a853 0%, #0d652d 100%);
+  box-shadow: 0 4px 15px rgba(52, 168, 83, 0.3);
+}
+
+.classification-badge.category-leave {
+  background: linear-gradient(135deg, #fbbc04 0%, #f57c00 100%);
+  box-shadow: 0 4px 15px rgba(251, 188, 4, 0.3);
+}
+
+.classification-badge.category-support {
+  background: linear-gradient(135deg, #4285f4 0%, #1a237e 100%);
+  box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+}
+
+.classification-badge.category-meeting {
+  background: linear-gradient(135deg, #9c27b0 0%, #4a148c 100%);
+  box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+}
+
+.classification-badge.category-purchase {
+  background: linear-gradient(135deg, #00bcd4 0%, #006064 100%);
+  box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+}
+
+.classification-badge.category-spam {
+  background: linear-gradient(135deg, #ea4335 0%, #b71c1c 100%);
+  box-shadow: 0 4px 15px rgba(234, 67, 53, 0.3);
+}
+
+.classification-badge.category-other {
+  background: linear-gradient(135deg, #78909c 0%, #455a64 100%);
+  box-shadow: 0 4px 15px rgba(120, 144, 156, 0.3);
+}
+
+/* AI Classification Section */
+.ai-classification-section {
+  background: linear-gradient(135deg, rgba(66, 133, 244, 0.08) 0%, rgba(52, 168, 83, 0.08) 100%);
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(66, 133, 244, 0.15);
+}
+
+.classification-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(66, 133, 244, 0.15);
+}
+
+.classification-header i {
+  font-size: 1.2rem;
+  color: #4285f4;
+}
+
+.classification-header span {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a73e8;
+  font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+}
+
+.classification-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.classification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.classification-item .item-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #5f6368;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.classification-item .item-value {
+  font-size: 0.9rem;
+  color: #202124;
+  line-height: 1.5;
+}
+
+.classification-item .category-value {
+  font-weight: 600;
+  color: #1a73e8;
+  background: rgba(66, 133, 244, 0.1);
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+.classification-item .action-value {
+  font-weight: 500;
+  color: #34a853;
+  background: rgba(52, 168, 83, 0.1);
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+.classification-item.justification {
+  background: rgba(251, 188, 4, 0.08);
+  padding: 12px;
+  border-radius: 10px;
+  border-left: 3px solid #fbbc04;
+}
+
+.classification-item .justification-value {
+  font-style: italic;
+  color: #5f6368;
+}
+
 .email-meta-section {
   display: flex;
   gap: 30px;

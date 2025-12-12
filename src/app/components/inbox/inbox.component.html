@@ -105,6 +105,49 @@
         </button>
       </div>
 
+      <!-- Classification Insights Bar - Always Visible -->
+      <div class="classification-insights" *ngIf="!loadingEmails && emails.length > 0">
+        <div class="insights-header">
+          <i class="bi bi-robot"></i>
+          <span>AI Insights</span>
+          <span class="classified-count" *ngIf="!classifying && getClassifiedCount() > 0">
+            {{ getClassifiedCount() }}/{{ emails.length }} classified
+          </span>
+          <span class="classifying-status" *ngIf="classifying">
+            <span class="mini-spinner"></span>
+            Classifying {{ classifyingProgress }}/{{ emails.length }}...
+          </span>
+        </div>
+        
+        <!-- Progress bar while classifying -->
+        <div class="classify-progress-bar" *ngIf="classifying">
+          <div class="progress-fill" [style.width.%]="(classifyingProgress / emails.length) * 100"></div>
+        </div>
+        
+        <div class="insights-categories" *ngIf="!classifying || getClassifiedCount() > 0">
+          <div *ngFor="let cat of getCategorySummary()" 
+               class="insight-chip clickable"
+               [ngClass]="'chip-' + cat.class"
+               [class.active]="selectedCategory === cat.name"
+               (click)="selectCategory(cat.name)"
+               title="Click to view {{ cat.name }} emails">
+            <i class="bi" [ngClass]="cat.icon"></i>
+            <span class="chip-count">{{ cat.count }}</span>
+            <span class="chip-name">{{ cat.name }}</span>
+          </div>
+          <button *ngIf="selectedCategory" 
+                  class="clear-filter-btn"
+                  (click)="clearCategoryFilter()">
+            <i class="bi bi-x"></i>
+            Clear
+          </button>
+          <div *ngIf="!classifying && getClassifiedCount() === 0" class="insight-hint">
+            <i class="bi bi-hourglass-split"></i>
+            Classification starting...
+          </div>
+        </div>
+      </div>
+
       <div class="panel-body">
         <div *ngIf="loadingEmails" class="loading-state">
           <div class="spinner"></div>
@@ -124,22 +167,37 @@
           <p class="empty-subtext">Your inbox is empty</p>
         </div>
 
+        <!-- Filter indicator -->
+        <div *ngIf="selectedCategory" class="filter-indicator">
+          <i class="bi bi-funnel-fill"></i>
+          <span>Showing <strong>{{ selectedCategory }}</strong> emails ({{ getFilteredEmails().length }})</span>
+        </div>
+
         <div class="email-list" *ngIf="!loadingEmails">
           <div
-            *ngFor="let email of emails; let i = index"
+            *ngFor="let email of getFilteredEmails(); let i = index"
             class="email-item"
             [class.active]="selectedEmail?.id === email.id"
+            [class.classified]="emailCategories[email.id]"
             (click)="selectEmail(email)"
-            [style.animation-delay]="i * 0.05 + 's'">
-            <div class="email-avatar">
-              <span>{{ email.from.charAt(0).toUpperCase() }}</span>
+            [style.animation-delay]="i * 0.02 + 's'">
+            <div class="email-avatar" [ngClass]="emailCategories[email.id] ? 'avatar-' + getCategoryClass(emailCategories[email.id]) : ''">
+              <span *ngIf="!emailCategories[email.id]">{{ email.from.charAt(0).toUpperCase() }}</span>
+              <i *ngIf="emailCategories[email.id]" class="bi" [ngClass]="getCategoryIcon(emailCategories[email.id])"></i>
             </div>
             <div class="email-content">
               <div class="email-header">
                 <div class="email-from">{{ email.from }}</div>
                 <div class="email-date">{{ formatDate(email.date) }}</div>
               </div>
-              <div class="email-subject">{{ email.subject || '(No Subject)' }}</div>
+              <div class="email-subject-row">
+                <span class="email-subject">{{ email.subject || '(No Subject)' }}</span>
+                <span *ngIf="emailCategories[email.id]" 
+                      class="email-category-tag"
+                      [ngClass]="'tag-' + getCategoryClass(emailCategories[email.id])">
+                  {{ emailCategories[email.id] }}
+                </span>
+              </div>
               <div class="email-snippet">{{ email.snippet }}</div>
             </div>
             <div class="email-indicator" *ngIf="selectedEmail?.id === email.id">

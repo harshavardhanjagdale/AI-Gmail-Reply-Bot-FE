@@ -21,6 +21,23 @@ export class InboxComponent implements OnInit {
   error = '';
   userName: string = 'User';
   showInfoPopup = false;
+  
+  // Classification tracking
+  emailCategories: { [id: string]: string } = {};
+  classifying = false;
+  classifyingProgress = 0;
+  selectedCategory: string | null = null;
+  
+  // Category configuration
+  private categories = [
+    { name: 'Invoice', icon: 'bi-receipt', class: 'invoice' },
+    { name: 'Leave Request', icon: 'bi-calendar-check', class: 'leave' },
+    { name: 'Support Request', icon: 'bi-headset', class: 'support' },
+    { name: 'Meeting Request', icon: 'bi-calendar-event', class: 'meeting' },
+    { name: 'Purchase Order', icon: 'bi-cart-check', class: 'purchase' },
+    { name: 'Spam', icon: 'bi-shield-exclamation', class: 'spam' },
+    { name: 'Other', icon: 'bi-envelope', class: 'other' }
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -61,6 +78,8 @@ export class InboxComponent implements OnInit {
       next: (emails) => {
         this.emails = emails;
         this.loadingEmails = false;
+        // Auto-classify all emails in background
+        this.autoClassifyEmails();
       },
       error: (err) => {
         this.loadingEmails = false;
@@ -121,6 +140,10 @@ export class InboxComponent implements OnInit {
       next: (emailDetail) => {
         this.selectedEmail = emailDetail;
         this.loadingEmailDetail = false;
+        // Store category for insights dashboard
+        if (emailDetail.category) {
+          this.emailCategories[email.id] = emailDetail.category;
+        }
       },
       error: (err) => {
         this.error = 'Failed to load email details. Please try again.';
@@ -191,5 +214,110 @@ export class InboxComponent implements OnInit {
   @HostListener('document:click')
   onDocumentClick(): void {
     this.showInfoPopup = false;
+  }
+
+  // Get count of classified emails
+  getClassifiedCount(): number {
+    return Object.keys(this.emailCategories).length;
+  }
+
+  // Get category summary for insights bar
+  getCategorySummary(): Array<{ name: string; icon: string; class: string; count: number }> {
+    const counts: { [key: string]: number } = {};
+    
+    Object.values(this.emailCategories).forEach(category => {
+      counts[category] = (counts[category] || 0) + 1;
+    });
+
+    return this.categories
+      .map(cat => ({ ...cat, count: counts[cat.name] || 0 }))
+      .filter(cat => cat.count > 0)
+      .sort((a, b) => b.count - a.count);
+  }
+
+  // Get category class for styling
+  getCategoryClass(category: string): string {
+    const cat = this.categories.find(c => c.name === category);
+    return cat?.class || 'other';
+  }
+
+  // Get category icon
+  getCategoryIcon(category: string): string {
+    const cat = this.categories.find(c => c.name === category);
+    return cat?.icon || 'bi-tag';
+  }
+
+  // Select a category to filter emails
+  selectCategory(category: string): void {
+    if (this.selectedCategory === category) {
+      this.selectedCategory = null;
+    } else {
+      this.selectedCategory = category;
+      const filteredEmails = this.getFilteredEmails();
+      if (filteredEmails.length > 0) {
+        this.selectEmail(filteredEmails[0]);
+      }
+    }
+  }
+
+  // Clear category filter
+  clearCategoryFilter(): void {
+    this.selectedCategory = null;
+  }
+
+  // Get filtered emails based on selected category
+  getFilteredEmails(): EmailListItem[] {
+    if (!this.selectedCategory) {
+      return this.emails;
+    }
+    return this.emails.filter(email => 
+      this.emailCategories[email.id] === this.selectedCategory
+    );
+  }
+
+  private async autoClassifyEmails(): Promise<void> {
+    if (!this.userId || this.emails.length === 0) return;
+
+    this.classifying = true;
+    this.classifyingProgress = 0;
+    this.emailCategories = {};
+
+    const BATCH_SIZE = 5; // Process 5 emails at a time for speed
+    const emails = [...this.emails];
+    
+    for (let i = 0; i < emails.length; i += BATCH_SIZE) {
+      const batch = emails.slice(i, i + BATCH_SIZE);
+      
+      // Process batch in parallel
+      await Promise.all(
+        batch.map(email => this.classifyEmail(email))
+      );
+      
+      this.classifyingProgress = Math.min(i + BATCH_SIZE, emails.length);
+    }
+
+    this.classifying = false;
+  }
+
+  // Classify a single email
+  private classifyEmail(email: EmailListItem): Promise<void> {
+    return new Promise((resolve) => {
+      if (!this.userId) {
+        resolve();
+        return;
+      }
+      
+      this.gmailService.fetchEmail(this.userId, email.id, email).subscribe({
+        next: (emailDetail) => {
+          if (emailDetail.category) {
+            this.emailCategories[email.id] = emailDetail.category;
+          }
+          resolve();
+        },
+        error: () => {
+          resolve(); // Continue even if one fails
+        }
+      });
+    });
   }
 }
