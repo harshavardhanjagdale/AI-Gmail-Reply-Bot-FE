@@ -1,0 +1,17 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+
+@Component({
+  selector: 'app-privacy-policy',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './privacy-policy.component.html',
+  styleUrls: ['./privacy-policy.component.css']
+})
+export class PrivacyPolicyComponent {
+  lastUpdated = 'December 15, 2025';
+  appName = 'Gmail Action Bot';
+  contactEmail = 'support@gmail-action-bot.com';
+}
+
