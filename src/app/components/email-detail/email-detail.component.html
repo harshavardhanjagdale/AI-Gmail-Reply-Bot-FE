@@ -63,14 +63,6 @@
         </div>
         <p class="snippet-text">{{ email.snippet }}</p>
       </div>
-
-      <div *ngIf="email.body" class="email-body-section">
-        <div class="body-label">
-          <i class="bi bi-file-text"></i>
-          Full Content
-        </div>
-        <div class="email-body-content" [innerHTML]="email.body"></div>
-      </div>
     </div>
 
     <div class="action-section">

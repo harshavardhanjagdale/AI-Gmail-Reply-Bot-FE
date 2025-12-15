@@ -49,6 +49,12 @@ interface FetchEmailResponse {
     justification?: string;
     rawModelResponse?: string;
   };
+  message?: {
+    id: string;
+    subject: string;
+    snippet: string;
+    body: string;
+  };
 }
 
 @Injectable({
@@ -72,7 +78,9 @@ export class GmailService {
         category: response.result?.category,
         action: response.result?.action,
         justification: response.result?.justification,
-        body: undefined // API doesn't return body in this response
+        // Use body from API response (properly formatted with line breaks)
+        snippet: response.message?.body || response.message?.snippet || emailListItem.snippet,
+        body: response.message?.body
       }))
     );
   }
